@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-temp_folder=/tmp/lsof
+temp_file=/tmp/lsof
 
-echo "COMMAND PID SIZE/OFF NODE NAME" > $temp_folder
+echo "COMMAND PID SIZE/OFF NODE NAME" > $temp_file
 
 #перечисление процессов в папке proc
 for pid in `ls  /proc/ | grep -P "^[0-9]" | sort -n`
@@ -20,7 +20,7 @@ for pid in `ls  /proc/ | grep -P "^[0-9]" | sort -n`
         node=$(stat --format="%i" $f 2> /dev/null)  #inode number
         size=$(stat --format="%s" $f 2> /dev/null)  #total size
 
-        echo $command $pid $size $node $f >> $temp_folder  #вывод значений в файл
+        echo $command $pid $size $node $f >> $temp_file  #вывод значений в файл
         done
         fi
 
@@ -28,8 +28,8 @@ for pid in `ls  /proc/ | grep -P "^[0-9]" | sort -n`
     done
 
 #вывод файла в виде таблицы
-column -s " " -t  $temp_folder
-rm -rf $temp_folder
+column -s " " -t  $temp_file
+rm -rf $temp_file
 
 
 
