@@ -29,7 +29,7 @@ for pid in `ls  /proc/ | grep -P "^[0-9]" | sort -n`
 
 #вывод файла в виде таблицы
 column -s " " -t  $temp_folder
-
+rm -rf $temp_folder
 
 
 
