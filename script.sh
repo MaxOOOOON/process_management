@@ -4,28 +4,30 @@ temp_folder=/tmp/lsof
 
 echo "COMMAND PID SIZE/OFF NODE NAME" > $temp_folder
 
+#перечисление процессов в папке proc
 for pid in `ls  /proc/ | grep -P "^[0-9]" | sort -n`
     do
-        if [[ -d /proc/$pid ]]
+        if [[ -d /proc/$pid ]] 
         then
-        command=$(cat /proc/$pid/comm)
+        command=$(cat /proc/$pid/comm)  #получение команды, которая запустила процесс
 
-        files=`readlink /proc/$pid/map_files/*; readlink /proc/$pid/cwd`
-        files=`printf "%s\n" "${files[@]}" | sort -u`
-        if ! [[ -z "$files" ]]
+        files=`readlink /proc/$pid/map_files/*; readlink /proc/$pid/cwd` #чтение симлинков
+        files=`printf "%s\n" "${files[@]}" | sort -u`                    #удаление повторяющихся файлов
+        if ! [[ -z "$files" ]]                                          
         then
-        for num in $files
+        for f in $files
         do
-        node=$(stat --format="%i" $num 2> /dev/null)
-        size=$(stat --format="%s" $num 2> /dev/null)
+        node=$(stat --format="%i" $f 2> /dev/null)  #inode number
+        size=$(stat --format="%s" $f 2> /dev/null)  #total size
 
-        echo $command $pid $size $node $num >> $temp_folder
+        echo $command $pid $size $node $f >> $temp_folder  #вывод значений в файл
         done
         fi
 
         fi
     done
 
+#вывод файла в виде таблицы
 column -s " " -t  $temp_folder
 
 
